@@ -2,10 +2,11 @@
 function generateTrainingPlan(userInput) {
     console.log(userInput);
 
-    const weeks = parseInt(userInput.weeks);
-    const frequency = parseInt(userInput.frequency);
-    const target = parseInt(userInput.target);
+    const weeks = userInput.weeks;
+    const frequency = userInput.frequency;
+    const targetTime = userInput.targetTime;
     const firstLongRun = userInput.firstLongRun;
+    const distance = userInput.distance;
     const longRunDay = userInput.longRunDay;
 
     const workoutDays = getWorkoutDays(frequency, longRunDay);
