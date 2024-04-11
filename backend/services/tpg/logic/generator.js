@@ -11,11 +11,23 @@ function generateTrainingPlan(userInput) {
 
     const workoutDays = getWorkoutDays(frequency, longRunDay);
     const workoutTypes = getWorkoutTypes(frequency);
+    const peakLongRun = getPeakLongRun(distance);
+
+    const interval = Math.round((peakLongRun - firstLongRun) / (weeks - 4) * 10) / 10;
+    console.log(interval);
 
     for (let i = 0; i < weeks; i++) {
+
         console.log(`Week ${i+1}: `);
         for (let j = 0; j < frequency; j++) {
-            console.log(` > ${workoutDays[j]}: ${workoutTypes[j]}`);
+            
+            // compute long run distance
+            if (workoutTypes[j] == 'long') {
+                var longRunDistance = (i < weeks - 3) ? 
+                    Math.floor(firstLongRun + (interval * i)) : 
+                    Math.floor((peakLongRun / 3) + (peakLongRun / 5) * (weeks - 1 - i));
+                console.log(` > ${workoutDays[j]}: ${workoutTypes[j]} - ${longRunDistance}k`);
+            } else console.log(` > ${workoutDays[j]}: ${workoutTypes[j]}`);
         }
     }
 
@@ -60,6 +72,16 @@ function getWorkoutTypes(frequency) {
         default: return [];
     }
 
+}
+
+function getPeakLongRun(distance) {
+    switch (distance) {
+        case 'marathon': return 30;
+        case 'half': return 18;
+        case '10k': return 8;
+        case '5k': return 4;
+        default: return 0;
+    }
 }
   
 module.exports = {
