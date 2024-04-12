@@ -17,18 +17,23 @@ function generateTrainingPlan(userInput) {
     const interval = Math.round((peakLongRun - firstLongRun) / (weeks - 4) * 10) / 10;
     console.log(interval);
 
+    var trainingPlan = new Array();
     for (let i = 0; i < weeks; i++) {
-
-        console.log(`Week ${i+1}: `);
         
         var longRunDistance = (i < weeks - 3) ? 
             Math.floor(firstLongRun + (interval * i)) : 
             Math.floor((peakLongRun / 6) + (peakLongRun / 6) * (weeks - 1 - i));
 
+        var workouts = new Array();
         for (let j = 0; j < frequency; j++) {
             var workoutDistance;
-            if (workoutTypes[j] == 'long')
-                workoutDistance = i == weeks - 1 ? 42.2 : longRunDistance;
+            if (workoutTypes[j] == 'long') {
+                workoutDistance = longRunDistance;
+                if (i == weeks - 1) {
+                    workoutTypes[j] = 'race day';
+                    workoutDistance = 42.2;
+                }
+            }
             else if (workoutTypes[j] == 'easy')
                 workoutDistance = Math.min(14, Math.floor(longRunDistance / 2));
             else {
@@ -36,12 +41,30 @@ function generateTrainingPlan(userInput) {
                 if (i == weeks - 1)
                     workoutTypes[j] = 'easy';
             }
-            
-            console.log(` > ${workoutDays[j]}: ${workoutTypes[j]} - ${workoutDistance}k`);
+            workouts.push({
+                day: workoutDays[j],
+                workout: {
+                    distance: workoutDistance,
+                    description: workoutTypes[j]
+                }
+            })
         }
+        trainingPlan.push({
+            week: i+1,
+            workouts: workouts
+        });
     }
+    const now = new Date();
+    const formattedDate = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')}`;
+    const formattedTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    const formattedDateAndTime = `${formattedTime} ${formattedDate}`;
 
-    return { "test": "pass" };
+    return { 
+        createdAt: formattedDateAndTime,
+        weeks: weeks,
+        targetTime: targetTime,
+        trainingPlan: trainingPlan,
+    };
 }
 
 module.exports = {
