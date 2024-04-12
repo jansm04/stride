@@ -23,16 +23,20 @@ function generateTrainingPlan(userInput) {
         
         var longRunDistance = (i < weeks - 3) ? 
             Math.floor(firstLongRun + (interval * i)) : 
-            Math.floor((peakLongRun / 3) + (peakLongRun / 5) * (weeks - 1 - i));
+            Math.floor((peakLongRun / 6) + (peakLongRun / 6) * (weeks - 1 - i));
 
         for (let j = 0; j < frequency; j++) {
             var workoutDistance;
             if (workoutTypes[j] == 'long')
-                workoutDistance = longRunDistance;
+                workoutDistance = i == weeks - 1 ? 42.2 : longRunDistance;
             else if (workoutTypes[j] == 'easy')
-                workoutDistance = min(14, Math.round(longRunDistance / 2));
-            else
-                workoutDistance = min(16, Math.round(longRunDistance / 2.5));
+                workoutDistance = Math.min(14, Math.floor(longRunDistance / 2));
+            else {
+                workoutDistance = Math.min(16, Math.floor(longRunDistance / 2.5));
+                if (i == weeks - 1)
+                    workoutTypes[j] = 'easy';
+            }
+            
             console.log(` > ${workoutDays[j]}: ${workoutTypes[j]} - ${workoutDistance}k`);
         }
     }

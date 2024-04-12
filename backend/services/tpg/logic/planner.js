@@ -39,9 +39,9 @@ function getWorkoutTypes(frequency) {
 }
 
 function getPeakLongRun(targetTime) {
-    if (targetTime > 210)
+    if (targetTime >= 210)
         return 30;
-    else if (210 > targetTime && targetTime > 180)
+    else if (210 > targetTime && targetTime >= 180)
         return 32;
     else 
         return 35;
