@@ -39,18 +39,20 @@ function generateTrainingPlan(userInput) {
             else if (workoutTypes[j] == 'easy') {
                 var rawEasyDistance = Math.floor(longRunDistance * 0.5);
                 var minEasyDistance = Math.floor(firstLongRun * 0.6);
-                workoutDistance = Math.min(14, Math.max(rawEasyDistance, minEasyDistance));
-                if (easyRunCount > 0)
+                workoutDistance = Math.min(12, Math.max(rawEasyDistance, minEasyDistance));
+                if (easyRunCount > 0 && i < weeks - 3)
                     workoutDistance += Math.min(2, Math.max(1, Math.floor(longRunDistance / 10)));
                 easyRunCount++;
             }
             else {
                 var rawTempoDistance = Math.floor(longRunDistance * 0.4);
                 var minTempoDistance = Math.floor(firstLongRun * 0.5);
-                workoutDistance = Math.min(12, Math.max(rawTempoDistance, minTempoDistance));
+                workoutDistance = Math.min(10, Math.max(rawTempoDistance, minTempoDistance));
                 if (i == weeks - 1)
                     workoutTypes[j] = 'easy';
             }
+            if (i == weeks - 1 && workoutTypes[j] != 'race day')
+                workoutDistance -= 2;
             workouts.push({
                 day: workoutDays[j],
                 workout: {
