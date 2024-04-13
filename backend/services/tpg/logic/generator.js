@@ -24,6 +24,8 @@ function generateTrainingPlan(userInput) {
             Math.floor(firstLongRun + (interval * i)) : 
             Math.floor((peakLongRun / 6) + (peakLongRun / 6) * (weeks - 1 - i));
 
+        
+        var easyRunCount = 0;
         var workouts = new Array();
         for (let j = 0; j < frequency; j++) {
             var workoutDistance;
@@ -34,10 +36,18 @@ function generateTrainingPlan(userInput) {
                     workoutDistance = 42.2;
                 }
             }
-            else if (workoutTypes[j] == 'easy')
-                workoutDistance = Math.min(14, Math.floor(longRunDistance / 2));
+            else if (workoutTypes[j] == 'easy') {
+                var rawEasyDistance = Math.floor(longRunDistance * 0.5);
+                var minEasyDistance = Math.floor(firstLongRun * 0.6);
+                workoutDistance = Math.min(14, Math.max(rawEasyDistance, minEasyDistance));
+                if (easyRunCount > 0)
+                    workoutDistance += Math.min(2, Math.max(1, Math.floor(longRunDistance / 10)));
+                easyRunCount++;
+            }
             else {
-                workoutDistance = Math.min(16, Math.floor(longRunDistance / 2.5));
+                var rawTempoDistance = Math.floor(longRunDistance * 0.4);
+                var minTempoDistance = Math.floor(firstLongRun * 0.5);
+                workoutDistance = Math.min(12, Math.max(rawTempoDistance, minTempoDistance));
                 if (i == weeks - 1)
                     workoutTypes[j] = 'easy';
             }
