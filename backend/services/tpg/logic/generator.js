@@ -41,7 +41,7 @@ function generateTrainingPlan(userInput) {
                 var rawEasyDistance = Math.floor(longRunDistance * 0.5);
                 var minEasyDistance = Math.floor(firstLongRun * 0.6);
                 workoutDistance = Math.min(12, Math.max(rawEasyDistance, minEasyDistance));
-                if (easyRunCount > 0 && i < weeks - 3)
+                if (easyRunCount % 2 == 1 && i < weeks - 3)
                     workoutDistance += Math.min(2, Math.max(1, Math.floor(longRunDistance / 10)));
                 easyRunCount++;
             }
