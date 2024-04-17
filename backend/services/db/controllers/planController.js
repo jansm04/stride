@@ -2,12 +2,11 @@
 function createTrainingPlan(req, res) {
     // todo
     const userInput = req.body;
-    const userID = userInput.userID;
-    console.log(`Adding user with ID: ${userID}`);
-
+    const planID = userInput.planID;
     res.status(200).json({
-        result: "success"
-    })
+        result: "success",
+        planID: planID
+    });
 }
 
 // get training plan with id in req
