@@ -35,7 +35,25 @@ function createUser(req, res) {
 
 // get user with id in req
 function getUser(req, res) {
-    // todo
+    const userID = req.params.id;
+    try {
+        if (!userID) return res.status(500).json({ error: "Missing user ID." });
+
+        const query = 'SELECT * FROM stride.users WHERE user_id = ?';
+        const values = [userID];
+
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            const data = results[0];
+            console.log("User fetched succesfully.", data);
+            res.status(200).json(data);
+        });
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
 }
 
 // delete user with id in req
