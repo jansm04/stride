@@ -9,6 +9,6 @@ router.post('/', userController.createUser);
 router.get('/:id', userController.getUser);
 
 // route to delete a user from the db
-router.get('/:id', userController.deleteUser);
+router.delete('/:id', userController.deleteUser);
 
 module.exports = router;
