@@ -12,7 +12,7 @@ function createTrainingPlan(req, res) {
         const factQuery = 'INSERT INTO stride.fact ( user_id, plan_id ) VALUES (?, ?);'
         const factValues = [userID, planID];
 
-        connection.query(query, values, (error, results) => {
+        connection.query(factQuery, factValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
                 return res.status(500).json({ error: error.sqlMessage });
