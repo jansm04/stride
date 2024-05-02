@@ -2,7 +2,26 @@ const connection = require('../config');
 
 // insert training plan in db
 function createTrainingPlan(req, res) {
-    // todo
+    const userInput = req.body;
+
+    const userID = userInput.userID;
+    const planID = userInput.planID;
+    try {
+        if (!planID) return res.status(500).json({ error: "Missing plan ID." });
+
+        const factQuery = 'INSERT INTO stride.fact ( user_id, plan_id ) VALUES (?, ?);'
+        const factValues = [userID, planID];
+
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            console.log("Plan inserted successfully into fact table.");
+        })
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
 }
 
 // get training plan with id in req
