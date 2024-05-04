@@ -6,19 +6,35 @@ function createTrainingPlan(req, res) {
 
     const userID = userInput.userID;
     const planID = userInput.planID;
+
+    const weeks = userInput.weeks;
+    const targetTime = userInput.targetTime;
+    const createdAt = userInput.createdAt;
+
     try {
         if (!planID) return res.status(500).json({ error: "Missing plan ID." });
 
         const factQuery = 'INSERT INTO stride.fact ( user_id, plan_id ) VALUES (?, ?);'
+        const planDetailsQuery = 'INSERT INTO stride.plan_details ( plan_id, weeks, target_time, created_at ) VALUES (?, ?, ?, ?);';
         const factValues = [userID, planID];
+        const planDetailsValues = [planID, weeks, targetTime, createdAt];
 
         connection.query(factQuery, factValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
                 return res.status(500).json({ error: error.sqlMessage });
             }
-            console.log("Plan inserted successfully into fact table.");
+            console.log("Plan inserted successfully into fact table.", results);
         })
+        connection.query(planDetailsQuery, planDetailsValues, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            console.log("Plan inserted successfully into plan details table.", results);
+        })
+
+        res.status(500).json({ result: "Plan added successfully." });
     } catch (error) {
         res.status(500).json({ error: error });
     }
