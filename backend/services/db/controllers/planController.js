@@ -32,9 +32,8 @@ function createTrainingPlan(req, res) {
                 return res.status(500).json({ error: error.sqlMessage });
             }
             console.log("Plan inserted successfully into plan details table.", results);
+            res.status(500).json({ result: "Plan added successfully." });
         })
-
-        res.status(500).json({ result: "Plan added successfully." });
     } catch (error) {
         res.status(500).json({ error: error });
     }
