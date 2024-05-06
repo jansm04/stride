@@ -68,16 +68,24 @@ function deleteTrainingPlan(req, res) {
     try {
         if (!planID) return res.status(500).json({ error: "Missing plan ID." });
 
-        const plansQuery = 'DELETE FROM stride.plans WHERE plan_id = ?';
-        const factQuery = 'DELETE FROM stride.fact WHERE plan_id = ?';
+        const planDetailsQuery = 'DELETE FROM stride.plan_details WHERE plan_id = ?;';
+        const planWorkoutsQuery = 'DELETE FROM stride.plan_workouts WHERE plan_id = ?;';
+        const factQuery = 'DELETE FROM stride.fact WHERE plan_id = ?;';
         const values = [planID];
 
-        connection.query(plansQuery, values, (error, results) => {
+        connection.query(planDetailsQuery, values, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
                 return res.status(500).json({ error: error.sqlMessage });
             }
-            console.log("Plan deleted successfully from plans table.", results);
+            console.log("Plan deleted successfully from plan details table.", results);
+        })
+        connection.query(planWorkoutsQuery, values, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            console.log("Plan deleted successfully from plan workouts table.", results);
         })
         connection.query(factQuery, values, (error, results) => {
             if (error) {
