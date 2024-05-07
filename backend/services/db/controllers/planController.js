@@ -1,7 +1,7 @@
 const connection = require('../config');
 
 // insert training plan in db
-function createTrainingPlan(req, res) {
+async function createTrainingPlan(req, res) {
     const userInput = req.body;
 
     const userID = userInput.userID;
@@ -10,6 +10,7 @@ function createTrainingPlan(req, res) {
     const weeks = userInput.weeks;
     const targetTime = userInput.targetTime;
     const createdAt = userInput.createdAt;
+    const trainingPlan = userInput.trainingPlan;
 
     try {
         if (!planID) return res.status(500).json({ error: "Missing plan ID." });
@@ -18,22 +19,37 @@ function createTrainingPlan(req, res) {
         const planDetailsQuery = 'INSERT INTO stride.plan_details ( plan_id, weeks, target_time, created_at ) VALUES (?, ?, ?, ?);';
         const factValues = [userID, planID];
         const planDetailsValues = [planID, weeks, targetTime, createdAt];
-
-        connection.query(factQuery, factValues, (error, results) => {
+        
+        await connection.query(factQuery, factValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
-                return res.status(500).json({ error: error.sqlMessage });
+                res.status(500).json({ error: error.sqlMessage });
             }
             console.log("Plan inserted successfully into fact table.", results);
         })
-        connection.query(planDetailsQuery, planDetailsValues, (error, results) => {
+        await connection.query(planDetailsQuery, planDetailsValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
-                return res.status(500).json({ error: error.sqlMessage });
+                res.status(500).json({ error: error.sqlMessage });
             }
             console.log("Plan inserted successfully into plan details table.", results);
-            res.status(500).json({ result: "Plan added successfully." });
         })
+        const planWorkoutsQuery = 'INSERT INTO stride.plan_workouts ( plan_id, week, day, distance, description ) VALUES (?, ?, ?, ?, ?);';
+        const items = Array.from(trainingPlan);
+        for (let i = 0; i < items.length; i++) {
+            const week = items[i].week;
+            const workouts = Array.from(items[i].workouts);
+            for (let j = 0; j < workouts.length; j++) {
+                const planWorkoutsValues = [planID, week, workouts[j].day, workouts[j].workout.distance, workouts[j].workout.description];
+                await connection.query(planWorkoutsQuery, planWorkoutsValues, (error, results) => {
+                    if (error) {
+                        console.log(error.sqlMessage);
+                        res.status(500).json({ error: error.sqlMessage });
+                    }
+                })
+            }
+        }
+        res.status(200).json({ result: "Plan inserted successfully. "});
     } catch (error) {
         res.status(500).json({ error: error });
     }
