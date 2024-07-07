@@ -133,6 +133,12 @@ function getTrainingPlan(req, res) {
                 const targetTime = planDetails.target_time;
                 const createdAt = planDetails.created_at;
 
+                /*
+                get plan from plan workouts table
+                    
+                this is done by first querying a list of all the weeks included in the training 
+                plan. this list is then used to submit more queries to get the workouts from each week
+                */
                 const planWorkoutsGroupByQuery = 'SELECT week FROM stride.plan_workouts WHERE plan_id = ? GROUP BY week;';
                 connection.query(planWorkoutsGroupByQuery, values, (error, weekResults) => {
                     if (error) {
@@ -140,6 +146,7 @@ function getTrainingPlan(req, res) {
                         return res.status(500).json({ error: error.sqlMessage });
                     }
 
+                    // query used to get workouts from each week
                     const planWorkoutsWeeklyQuery = 'SELECT * FROM stride.plan_workouts WHERE plan_id = ? AND week = ?;';
 
                     var trainingPlan = new Array();
@@ -244,10 +251,7 @@ function deleteTrainingPlan(req, res) {
                 res.status(200).json({ result: "Plan deleted successfully." });
             })
         })
-        
-
-        
-
+    
     } catch (error) {
         res.status(500).json({ error: error });
     }
