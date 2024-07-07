@@ -4,7 +4,6 @@ const connection = require('../config');
 function createUser(req, res) {
     const userInput = req.body;
 
-    const userID = userInput.userID;
     const username = userInput.username;
     const password = userInput.password;
 
@@ -13,11 +12,11 @@ function createUser(req, res) {
     const lastName = userInput.lastName ? userInput.lastName : null;
 
     try {
-        if (!userID || !username || !password)
+        if (!username || !password)
             return res.status(500).json({ error: "Missing required variables" });
 
-        const query = 'INSERT INTO stride.users ( user_id, username, password, first_name, last_name) VALUES (?, ?, ?, ?, ?);'
-        const values = [userID, username, password, firstName, lastName];
+        const query = 'INSERT INTO stride.users ( username, password, first_name, last_name) VALUES (?, ?, ?, ?);'
+        const values = [username, password, firstName, lastName];
 
         connection.query(query, values, (error, results) => {
             if (error) {
@@ -25,7 +24,7 @@ function createUser(req, res) {
                 return res.status(500).json({ error: error.sqlMessage });
             }
             console.log("User added succesfully.", results);
-            res.status(200).json({ result: "User added succesfully." });
+            res.status(200).json(results);
         });
         
     } catch (error) {
@@ -71,7 +70,7 @@ function deleteUser(req, res) {
                 return res.status(500).json({ error: error.sqlMessage });
             }
             console.log("User deleted succesfully.", results);
-            res.status(200).json({ result: "User deleted succesfully." });
+            res.status(200).json(results);
         })
     } catch (error) {
         res.status(500).json({ error: error });
