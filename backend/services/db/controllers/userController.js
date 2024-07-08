@@ -15,16 +15,27 @@ function createUser(req, res) {
         if (!username || !password)
             return res.status(500).json({ error: "Missing required variables" });
 
-        const query = 'INSERT INTO stride.users ( username, password, first_name, last_name) VALUES (?, ?, ?, ?);'
-        const values = [username, password, firstName, lastName];
+        const insertQuery = 'INSERT INTO stride.users ( username, password, first_name, last_name) VALUES (?, ?, ?, ?);'
+        const insertValues = [username, password, firstName, lastName];
 
-        connection.query(query, values, (error, results) => {
+        connection.query(insertQuery, insertValues, (error, insertResults) => {
             if (error) {
                 console.log(error.sqlMessage);
                 return res.status(500).json({ error: error.sqlMessage });
             }
-            console.log("User added succesfully.", results);
-            res.status(200).json(results);
+            console.log("User added succesfully.", insertResults);
+
+            // return new user
+            const userID = insertResults.insertId;
+            const fetchQuery = 'SELECT * FROM stride.users WHERE user_id = ?;';
+            const fetchValues = [userID];
+            connection.query(fetchQuery, fetchValues, (error, fetchResults) => {
+                if (error) {
+                    console.log(error.sqlMessage);
+                    return res.status(500).json({ error: error.sqlMessage });
+                }
+                res.status(200).json(fetchResults[0]);
+            })
         });
         
     } catch (error) {
@@ -32,14 +43,37 @@ function createUser(req, res) {
     }
 }
 
-// get user with id in req
-function getUser(req, res) {
+// get user with username
+function getUserDetails(req, res) {
     const username = req.body.username;
     try {
         if (!username) return res.status(500).json({ error: "Missing username." });
 
-        const query = 'SELECT * FROM stride.users WHERE username = ?';
+        const query = 'SELECT * FROM stride.users WHERE username = ?;';
         const values = [username];
+
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            const data = results[0];
+            console.log("User details found succesfully.", data);
+            res.status(200).json(data);
+        });
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+}
+
+// get user with id in req
+function getUser(req, res) {
+    const userID = req.params.id;
+    try {
+        if (!userID) return res.status(500).json({ error: "Missing user ID." });
+
+        const query = 'SELECT * FROM stride.users WHERE user_id = ?';
+        const values = [userID];
 
         connection.query(query, values, (error, results) => {
             if (error) {
@@ -79,6 +113,7 @@ function deleteUser(req, res) {
 
 module.exports = {
     createUser, 
+    getUserDetails,
     getUser,
     deleteUser
 }
