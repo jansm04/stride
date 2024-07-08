@@ -34,12 +34,12 @@ function createUser(req, res) {
 
 // get user with id in req
 function getUser(req, res) {
-    const userID = req.params.id;
+    const username = req.body.username;
     try {
-        if (!userID) return res.status(500).json({ error: "Missing user ID." });
+        if (!username) return res.status(500).json({ error: "Missing username." });
 
-        const query = 'SELECT * FROM stride.users WHERE user_id = ?';
-        const values = [userID];
+        const query = 'SELECT * FROM stride.users WHERE username = ?';
+        const values = [username];
 
         connection.query(query, values, (error, results) => {
             if (error) {
