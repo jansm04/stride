@@ -15,7 +15,13 @@ async function register(req, res) {
         const accessToken = tokenService.generateAccessToken(user);
         const refreshToken = tokenService.generateRefreshToken(user);
         res.status(200).json({ 
-            result: "registration successful",
+            result: "success",
+            user: {
+                userId: user.user_id,
+                username: user.username,
+                firstName: user.first_name,
+                lastName: user.last_name
+            },
             accessToken,
             refreshToken
         });
@@ -35,7 +41,13 @@ async function login(req, res) {
         const accessToken = tokenService.generateAccessToken(user);
         const refreshToken = tokenService.generateRefreshToken(user);
         res.status(200).json({ 
-            result: "login successful",
+            result: "success",
+            user: {
+                userId: user.user_id,
+                username: user.username,
+                firstName: user.first_name,
+                lastName: user.last_name
+            },
             accessToken,
             refreshToken
         });
@@ -45,24 +57,60 @@ async function login(req, res) {
     }
 }
 
+// verify the user
+function verify(req, res) {
+    const authHeader = req.headers['authorization'];
+    const accessToken = authHeader && authHeader.split(' ')[1];
+
+    if (!accessToken) {
+        console.log("Access token required.");
+        return res.status(401).json({
+            message: "Access token required."
+        });
+    }
+
+    // authenticate token
+    tokenService.verifyAccessToken(accessToken, (error, user) => {
+        if (error) {
+            console.log("Verification failed.");
+            return res.status(403).json({
+                error: error
+            })
+        }
+        console.log("User successfully authenticated!");
+        res.status(200).json({ 
+            result: "success",
+            user: user 
+        });
+    })
+}
+
 // refresh the access token
 function refreshToken(req, res) {
     const { refreshToken } = req.body;
     if (!refreshToken) {
-        return res.status(500).json({
+        return res.status(401).json({
             message: "Refresh token required."
         });
     }
 
     tokenService.verifyRefreshToken(refreshToken, (error, user) => {
         if (error) {
-            return res.status(500).json({
+            return res.status(403).json({
                 message: "Invalid refresh token."
             });
         }
 
+        // convert to user object readable by token generator
+        user = {
+            user_id: user.userId,
+            username: user.username,
+            first_name: user.firstName,
+            last_name: user.lastName
+        }
+
         // if valid refresh token, generate and return new token
-        const newAccessToken = token.generateAccessToken(user);
+        const newAccessToken = tokenService.generateAccessToken(user);
         res.status(200).json({
             accessToken: newAccessToken
         })
@@ -96,5 +144,6 @@ module.exports = {
     register,
     login,
     refreshToken,
+    verify
     // authenticateToken
 }

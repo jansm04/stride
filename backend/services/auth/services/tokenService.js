@@ -30,6 +30,14 @@ function generateRefreshToken(user) {
     });
 }
 
+// verify access token with callback function
+function verifyAccessToken(token, callback) {
+    jwt.verify(token, SECRET_KEY, (error, decoded) => {
+        if (error) return callback(error, null);
+        callback(null, decoded);
+    })
+}
+
 // verify refresh token with callback function
 function verifyRefreshToken(token, callback) {
     jwt.verify(token, REFRESH_SECRET_KEY, (error, decoded) => {
@@ -41,5 +49,6 @@ function verifyRefreshToken(token, callback) {
 module.exports = {
     generateAccessToken,
     generateRefreshToken,
+    verifyAccessToken,
     verifyRefreshToken
 }
