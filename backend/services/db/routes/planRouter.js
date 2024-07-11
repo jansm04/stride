@@ -3,7 +3,7 @@ const router = express.Router();
 const planController = require('../controllers/planController');
 
 // route to insert a training plan in the db
-router.post('/', planController.createTrainingPlan);
+router.post('/:id', planController.createTrainingPlan);
 
 // route to get a training plan from the db
 router.get('/:id', planController.getTrainingPlan);

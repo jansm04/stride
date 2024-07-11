@@ -1,10 +1,44 @@
 const connection = require('../config');
 
-// insert training plan in db
-function createTrainingPlan(req, res) {
+/*
+insert plan into db
+
+NOTE: plan_id is auto incremented on insertion to the fact table so we do not need to add to the query.
+once the query is sent we can then retrieve the plan_id as the insert id of the results and use it to make
+insertions for the plan_details and plan_workouts table
+
+    Example of an insertion:
+    ------------------------------------------------------------------
+
+    fact:
+    +---------+---------+
+    | user_id | plan_id |
+    +---------+---------+
+    |       1 |       4 |
+    +---------+---------+
+
+    plan_details:
+    +---------+-------+-------------+---------------------+
+    | plan_id | weeks | target_time | created_at          |
+    +---------+-------+-------------+---------------------+
+    |       4 |    16 |         220 | 17:18:12 2024-05-02 |
+    +---------+-------+-------------+---------------------+
+
+    plan_workouts:
+    +------------+---------+------+-----------+----------+-------------+
+    | workout_id | plan_id | week | day       | distance | description |
+    +------------+---------+------+-----------+----------+-------------+
+    |        241 |       4 |    1 | monday    |        4 | easy        |
+    |        242 |       4 |    1 | tuesday   |        5 | easy        |
+    |        243 |       4 |    1 | wednesday |        4 | tempo       |
+    |        244 |       4 |    1 | friday    |        4 | easy        |
+    (for all the workouts)
+
+*/
+async function createTrainingPlan(req, res) {
+    const userId = req.params.id;
     const userInput = req.body;
 
-    const userID = userInput.userID;
     const weeks = userInput.weeks;
     const targetTime = userInput.targetTime;
     const createdAt = userInput.createdAt;
@@ -12,13 +46,13 @@ function createTrainingPlan(req, res) {
 
     try {
         const missingInfoMessage = "Missing required information."
-        if (!userID || !weeks || !targetTime || !createdAt || !trainingPlan) 
+        if (!userId || !weeks || !targetTime || !createdAt || !trainingPlan) 
             return res.status(500).json({ error: missingInfoMessage });
 
-        // insert plan to central fact table
+        // insert plan into central fact table
         const factQuery = 'INSERT INTO stride.fact ( user_id ) VALUES (?);'
         const factValues = [
-            userID
+            userId
         ];
         connection.query(factQuery, factValues, (error, results) => {
             if (error) {
@@ -102,19 +136,24 @@ function createTrainingPlan(req, res) {
 }
 
 // get training plan with user id in req
-function getTrainingPlan(req, res) {
-    const userID = req.params.id;
+async function getTrainingPlan(req, res) {
+    const userId = req.params.id;
     try {
-        if (!userID) 
+        if (!userId) 
             return res.status(500).json({ error: "Missing user ID." });
 
         // fetch plan id from given user then get all records under that id
         const factSelectQuery = 'SELECT plan_id FROM stride.fact WHERE user_id = ?;'
-        const factSelectValues = [userID];
+        const factSelectValues = [userId];
         connection.query(factSelectQuery, factSelectValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
                 return res.status(500).json({ error: error.sqlMessage });
+            }
+            if (results.length == 0) {
+                const message = "Empty result set fetched";
+                console.log(message);
+                return res.status(500).json({ error: message });
             }
             const planID = results[0].plan_id;
             const values = [planID];
@@ -203,15 +242,15 @@ function getTrainingPlan(req, res) {
 }
 
 // delete training plan with user id in req
-function deleteTrainingPlan(req, res) {
-    const userID = req.params.id;
+async function deleteTrainingPlan(req, res) {
+    const userId = req.params.id;
     try {
-        if (!userID) 
+        if (!userId) 
             return res.status(500).json({ error: "Missing plan ID." });
 
         // fetch plan id from given user then delete all records under that id
         const factSelectQuery = 'SELECT plan_id FROM stride.fact WHERE user_id = ?;'
-        const factSelectValues = [userID];
+        const factSelectValues = [userId];
         connection.query(factSelectQuery, factSelectValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
@@ -248,14 +287,14 @@ function deleteTrainingPlan(req, res) {
                     return res.status(500).json({ error: error.sqlMessage });
                 }
                 console.log("Succesfully deleted plan from fact table.", results);
-                res.status(200).json({ result: "Plan deleted successfully." });
+                res.status(200).json({ result: "success" });
             })
         })
     
     } catch (error) {
         res.status(500).json({ error: error });
     }
-}
+} 
 
 module.exports = {
     createTrainingPlan,

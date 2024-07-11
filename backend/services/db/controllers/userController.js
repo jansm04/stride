@@ -26,9 +26,9 @@ function createUser(req, res) {
             console.log("User added succesfully.", insertResults);
 
             // return new user
-            const userID = insertResults.insertId;
+            const userId = insertResults.insertId;
             const fetchQuery = 'SELECT * FROM stride.users WHERE user_id = ?;';
-            const fetchValues = [userID];
+            const fetchValues = [userId];
             connection.query(fetchQuery, fetchValues, (error, fetchResults) => {
                 if (error) {
                     console.log(error.sqlMessage);
@@ -68,12 +68,12 @@ function getUserDetails(req, res) {
 
 // get user with id in req
 function getUser(req, res) {
-    const userID = req.params.id;
+    const userId = req.params.id;
     try {
-        if (!userID) return res.status(500).json({ error: "Missing user ID." });
+        if (!userId) return res.status(500).json({ error: "Missing user ID." });
 
         const query = 'SELECT * FROM stride.users WHERE user_id = ?';
-        const values = [userID];
+        const values = [userId];
 
         connection.query(query, values, (error, results) => {
             if (error) {
@@ -81,7 +81,7 @@ function getUser(req, res) {
                 return res.status(500).json({ error: error.sqlMessage });
             }
             const data = results[0];
-            console.log("User fetched succesfully.", data);
+            console.log(data);
             res.status(200).json(data);
         });
     } catch (error) {
@@ -91,19 +91,19 @@ function getUser(req, res) {
 
 // delete user with id in req
 function deleteUser(req, res) {
-    const userID = req.params.id;
+    const userId = req.params.id;
     try {
-        if (!userID) return res.status(500).json({ error: "Missing user ID." });
+        if (!userId) return res.status(500).json({ error: "Missing user ID." });
 
         const query = 'DELETE FROM stride.users WHERE user_id = ?';
-        const values = [userID];
+        const values = [userId];
 
         connection.query(query, values, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
                 return res.status(500).json({ error: error.sqlMessage });
             }
-            console.log("User deleted succesfully.", results);
+            console.log(results);
             res.status(200).json(results);
         })
     } catch (error) {
