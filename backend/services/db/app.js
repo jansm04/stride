@@ -42,8 +42,9 @@ const verifyUser = async (req, res, next) => {
 
         // in case of a bad axios request
     } catch (error) {
-        return res.status(error.response.status).json({
-            error: error
+        const statusCode = error.response?.status;
+        return res.status(statusCode ? statusCode : 500).json({
+            error
         });
     }
     

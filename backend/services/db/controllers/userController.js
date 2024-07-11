@@ -55,11 +55,21 @@ function getUserDetails(req, res) {
         connection.query(query, values, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
-                return res.status(500).json({ error: error.sqlMessage });
+                return res.status(500).json({ 
+                    error: error.sqlMessage 
+                });
             }
             const data = results[0];
-            console.log("User details found succesfully.", data);
-            res.status(200).json(data);
+            if (data) {
+                console.log("User details found succesfully.", data);
+                res.status(200).json(data);
+            } else {
+                const message = "No user found under the given username.";
+                console.log(message);
+                res.status(500).json({
+                    error: message
+                });
+            }
         });
     } catch (error) {
         res.status(500).json({ error: error });
@@ -81,8 +91,16 @@ function getUser(req, res) {
                 return res.status(500).json({ error: error.sqlMessage });
             }
             const data = results[0];
-            console.log(data);
-            res.status(200).json(data);
+            if (data) {
+                console.log("User details found succesfully.", data);
+                res.status(200).json(data);
+            } else {
+                const message = "No user found under the given user id.";
+                console.log(message);
+                res.status(500).json({
+                    error: message
+                });
+            }
         });
     } catch (error) {
         res.status(500).json({ error: error });
@@ -104,7 +122,13 @@ function deleteUser(req, res) {
                 return res.status(500).json({ error: error.sqlMessage });
             }
             console.log(results);
-            res.status(200).json(results);
+            if (results.affectedRows > 0) {
+                console.log("User deleted successfully.");
+                res.status(200).json(results);
+            } else {
+                console.log("Failed to delete user.");
+                res.status(500).json(results);
+            }
         })
     } catch (error) {
         res.status(500).json({ error: error });
