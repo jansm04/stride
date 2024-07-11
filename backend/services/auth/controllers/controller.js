@@ -56,34 +56,6 @@ async function login(req, res) {
     }
 }
 
-// verify the user
-function verify(req, res) {
-    const authHeader = req.headers['authorization'];
-    const accessToken = authHeader && authHeader.split(' ')[1];
-
-    if (!accessToken) {
-        console.log("Access token required.");
-        return res.status(401).json({
-            message: "Access token required."
-        });
-    }
-
-    // authenticate token
-    tokenService.verifyAccessToken(accessToken, (error, user) => {
-        if (error) {
-            console.log("Verification failed.");
-            return res.status(403).json({
-                error: error
-            })
-        }
-        console.log("User successfully authenticated!");
-        res.status(200).json({ 
-            result: "success",
-            user: user 
-        });
-    })
-}
-
 // refresh the access token
 function refreshToken(req, res) {
     const { refreshToken } = req.body;
@@ -134,6 +106,4 @@ module.exports = {
     register,
     login,
     refreshToken,
-    verify
-    // authenticateToken
 }

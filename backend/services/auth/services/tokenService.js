@@ -47,19 +47,19 @@ async function generateRefreshToken(user) {
 
 // verify refresh token by querying the database
 async function verifyRefreshToken(refreshToken, callback) {
+    console.log("Verifying refresh token...");
     const response = await axios.post(DB_CONNECTION_URL + '/verify-refresh', {
         refreshToken: refreshToken
     });
     if (response.status !== 200) {
         callback(new Error(), null);
     }
-    console.log("RESPONSE BODY:", response.data);
+    console.log("Refresh token verified!", response.data);
     callback(null, response.data);
 }
 
 module.exports = {
     generateAccessToken,
     generateRefreshToken,
-    // verifyAccessToken,
     verifyRefreshToken
 }

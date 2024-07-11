@@ -7,6 +7,7 @@ const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL;
 
 // register new user and post user data to external server
 async function registerUser(userInput) {
+    console.log("Registering user...");
     const hashedPassword = await bcrypt.hash(userInput.password, 10);
     try {
         // send a request to external server to post new user
@@ -27,6 +28,7 @@ async function registerUser(userInput) {
         if (!user) {
             throw new Error("Registration failed: User not found");
         }
+        console.log("User registered!");
         return user;
 
     } catch (error) {
@@ -37,6 +39,7 @@ async function registerUser(userInput) {
 
 // authenticate user
 async function authenticateUser(username, password) {
+    console.log("Checking user credentials...");
     try {
         // send a request to the external server to get user details
         const response = await axios.post(DB_CONNECTION_URL + "/user-details", {
@@ -60,6 +63,7 @@ async function authenticateUser(username, password) {
         if (!isPasswordValid) {
             throw new Error("Authentication failed: Invalid password.");
         }
+        console.log("Username and password is correct.");
         return user;
 
     } catch (error) {
