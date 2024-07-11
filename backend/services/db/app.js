@@ -1,12 +1,12 @@
 const express = require('express');
-const axios = require('axios')
+const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const planRouter = require('./routes/planRouter');
 const userRouter = require('./routes/userRouter');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
-const AUTH_CONNECTION_URL = process.env.AUTH_CONNECTION_URL;
+const PUBLIC_KEY = process.env.PUBLIC_KEY;
 
 // create express application
 const app = express();
@@ -16,38 +16,60 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // middleware to authenticate user
-const verifyUser = async (req, res, next) => {
+// const verifyUser = async (req, res, next) => {
 
+//     const authHeader = req.headers['authorization'];
+//     const accessToken = authHeader && authHeader.split(' ')[1];
+
+//     console.log(`Verifying user... \nAccess token: ${accessToken}`);
+//     try {
+//         const response = await axios.post(AUTH_CONNECTION_URL, req.body, {
+//             headers: {
+//                 authorization: authHeader
+//             } 
+//         });
+
+//         // if user is authenticated then proceed with request
+//         if (response.status == 200) {
+//             console.log("User authenticated!");
+//             next();
+//         } else {
+//             console.log("User authentication failed.");
+//             return res.status(response.status).json({ 
+//                 error: response.error 
+//             });
+//         }
+
+//         // in case of a bad axios request
+//     } catch (error) {
+//         const statusCode = error.response?.status;
+//         return res.status(statusCode ? statusCode : 500).json({
+//             error
+//         });
+//     }
+    
+// }
+
+// authenticate user with public token
+const verifyUser = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const accessToken = authHeader && authHeader.split(' ')[1];
-
-    console.log(`Verifying user... \nAccess token: ${accessToken}`);
+    const accessToken = authHeader && authHeader.split(' ')[1];    
     try {
-        const response = await axios.post(AUTH_CONNECTION_URL, req.body, {
-            headers: {
-                authorization: authHeader
-            } 
-        });
-
-        // if user is authenticated then proceed with request
-        if (response.status == 200) {
-            console.log("User authenticated!");
-            next();
-        } else {
-            console.log("User authentication failed.");
-            return res.status(response.status).json({ 
-                error: response.error 
-            });
-        }
-
-        // in case of a bad axios request
+        const decoded = jwt.verify(
+            accessToken, 
+            PUBLIC_KEY, 
+            {
+                algorithms: ['RS256']
+            }
+        );
+        console.log("User authenticated!", decoded);
+        next();
     } catch (error) {
-        const statusCode = error.response?.status;
-        return res.status(statusCode ? statusCode : 500).json({
-            error
+        console.log("User authentication failed.");
+        return res.status(401).json({ 
+            error: error 
         });
     }
-    
 }
 
 // use authentication middleware for all changes in the plans tables and for 

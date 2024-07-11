@@ -7,13 +7,12 @@ const tokenService = require('../services/tokenService');
 // enter a first and last name
 async function register(req, res) {
     const userInput = req.body;
-    console.log(userInput);
     try {
         const user = await userService.registerUser(userInput);
 
         // generate tokens
         const accessToken = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
+        const refreshToken = await tokenService.generateRefreshToken(user);
         res.status(200).json({ 
             result: "success",
             user: {
@@ -39,7 +38,7 @@ async function login(req, res) {
 
         // generate tokens
         const accessToken = tokenService.generateAccessToken(user);
-        const refreshToken = tokenService.generateRefreshToken(user);
+        const refreshToken = user.refresh_token;
         res.status(200).json({ 
             result: "success",
             user: {
@@ -100,15 +99,6 @@ function refreshToken(req, res) {
                 message: "Invalid refresh token."
             });
         }
-
-        // convert to user object readable by token generator
-        user = {
-            user_id: user.userId,
-            username: user.username,
-            first_name: user.firstName,
-            last_name: user.lastName
-        }
-
         // if valid refresh token, generate and return new token
         const newAccessToken = tokenService.generateAccessToken(user);
         res.status(200).json({

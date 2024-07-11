@@ -8,6 +8,12 @@ router.post('/', userController.createUser);
 // route to securely get a user's details with a username
 router.post('/user-details', userController.getUserDetails);
 
+// route to insert a user's refresh token into the db
+router.post('/insert-refresh', userController.insertRefreshToken);
+
+// route to verify a user's refresh token
+router.post('/verify-refresh', userController.verifyRefreshToken);
+
 /*
 NOTE:
 the below routes are protected, meaning they require user authentication to 
