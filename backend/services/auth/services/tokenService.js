@@ -25,37 +25,50 @@ function generateAccessToken(user) {
         return accessToken;
     } catch (error) {
         console.log(error);
-        res.status(500).json({error});
     }
 }
 
-async function generateRefreshToken(user) {
+// generate refresh token as random 64 byte string
+function generateRefreshToken(user, callback) {
     console.log("Generating refresh token...");
+
     const refreshToken = crypto.randomBytes(64).toString('hex');
-    const response = await axios.post(DB_CONNECTION_URL + '/insert-refresh', {
+    axios.post(DB_CONNECTION_URL + '/insert-refresh', {
         userId: user.user_id,
         refreshToken: refreshToken
+    }, {
+        // throw an error if the response status is anything other than 200
+        validateStatus: (status) => {
+            return status == 200; 
+        }
+    }).then(() => {
+        console.log("Refresh token generated!");
+        callback(null, refreshToken)
+
+    }).catch((error) => {
+        console.log("Failed to generate refresh token.", error);
+        callback(error, null);
     });
-    if (response.status !== 200) {
-        res.status(response.status).json({
-            error: "Refresh failed: Unable to reach external server."
-        });
-    }
-    console.log("Refresh token generated!");
-    return refreshToken;
 }
 
 // verify refresh token by querying the database
-async function verifyRefreshToken(refreshToken, callback) {
+function verifyRefreshToken(refreshToken, callback) {
     console.log("Verifying refresh token...");
-    const response = await axios.post(DB_CONNECTION_URL + '/verify-refresh', {
+    axios.post(DB_CONNECTION_URL + '/verify-refresh', {
         refreshToken: refreshToken
+    }, {
+        // throw an error if the response status is anything other than 200
+        validateStatus: (status) => {
+            return status == 200; 
+        }
+    }).then((response) => {
+        console.log("Refresh token verified!", response.data);
+        callback(null, response.data);
+
+    }).catch((error) => {
+        console.log("Failed to verify refresh token.");
+        callback(error, null);
     });
-    if (response.status !== 200) {
-        callback(new Error(), null);
-    }
-    console.log("Refresh token verified!", response.data);
-    callback(null, response.data);
 }
 
 module.exports = {
