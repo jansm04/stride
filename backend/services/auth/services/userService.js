@@ -1,6 +1,5 @@
 const axios = require('axios');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL;
@@ -24,7 +23,7 @@ async function registerUser(userInput, callback) {
     }).then((response) => {
         console.log("User registered!");
         callback(null, response.data);
-        
+
     }).catch((error) => {
         console.log("User registration failed.");
         callback(error, null);

@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const axios = require('axios');
 
 const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL;
-
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 // access tokens last 1 hour
