@@ -14,6 +14,9 @@ router.post('/insert-refresh', userController.insertRefreshToken);
 // route to verify a user's refresh token
 router.post('/verify-refresh', userController.verifyRefreshToken);
 
+// if insertion from auth server needs to be reversed
+router.post('/undo-register', userController.deleteUserByUsername);
+
 /*
 NOTE:
 the below routes are protected, meaning they require user authentication to 

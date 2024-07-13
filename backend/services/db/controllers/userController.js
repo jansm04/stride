@@ -141,6 +141,34 @@ function verifyRefreshToken(req, res) {
     }
 }
 
+function deleteUserByUsername(req, res) {
+    const username = req.body.username;
+
+    try {
+        if (!username) return res.status(500).json({ error: "Missing username." });
+
+        const query = 'DELETE FROM stride.users WHERE username = ?;';
+        const values = [username];
+
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            console.log(results);
+            if (results.affectedRows > 0) {
+                console.log("User deleted successfully.");
+                res.status(200).json(results);
+            } else {
+                console.log("Failed to delete user.");
+                res.status(500).json(results);
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+}
+
 // get user with id in req
 function getUser(req, res) {
     const userId = req.params.id;
@@ -205,6 +233,7 @@ module.exports = {
     getUserDetails,
     insertRefreshToken,
     verifyRefreshToken,
+    deleteUserByUsername,
     getUser,
     deleteUser
 }

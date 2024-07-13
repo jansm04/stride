@@ -29,22 +29,30 @@ async function register(req, res) {
             const accessToken = tokenService.generateAccessToken(user);
 
             if (!accessToken) {
-                // todo: send req to db server to UNDO user registration if tokens were not generated
-                return res.status(500).json({
-                    error: "Failed to generate JWT access token."
-                });
+                // undo user registration
+                userService.deleteUser(user.username, () => {
+                    return res.status(500).json({
+                        error: "Failed to generate JWT access token."
+                    });
+                    
+                })
             }
 
             tokenService.generateRefreshToken(user, (error, refreshToken) => {
+                
+                // if an error ocurred posting the refresh token to the database
                 if (error) {
-                    // if an error ocurred posting the refresh token to the database
-                    if (error.response) {
-                        return res.status(error.response.status).json(error.response.data);
-                    }
-                    // anything else
-                    return res.status(500).json({ 
-                        error: error 
-                    });
+                    // undo user registration
+                    userService.deleteUser(user.username, () => {
+                        if (error.response) {
+                            return res.status(error.response.status).json(error.response.data);
+                        }
+                        // anything else
+                        return res.status(500).json({ 
+                            error: error 
+                        });
+                    })
+
 
                 // if the refresh token was succesfully fetched then send the user 
                 // info + tokens back to the client

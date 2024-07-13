@@ -30,6 +30,26 @@ async function registerUser(userInput, callback) {
     });
 }
 
+function deleteUser(username, callback) {
+    console.log("Deleting user from database...");
+
+    axios.post(DB_CONNECTION_URL + '/undo-register', {
+        username: username
+    }, {
+        // throw an error if the response status is anything other than 200
+        validateStatus: (status) => {
+            return status == 200;
+        }
+    }).then(() => {
+        console.log("User deleted!");
+        callback();
+
+    }).catch(() => {
+        console.log("Failed to delete user.");
+        callback();
+    });
+}
+
 // authenticate user
 function authenticateUser(username, password, callback) {
     console.log("Checking user credentials...");
@@ -65,5 +85,6 @@ function authenticateUser(username, password, callback) {
 
 module.exports = {
     registerUser,
+    deleteUser,
     authenticateUser
 }
