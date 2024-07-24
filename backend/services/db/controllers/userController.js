@@ -169,6 +169,34 @@ function deleteUserByUsername(req, res) {
     }
 }
 
+// delete a users refesh token from database, effectively invalidating it
+function logoutUser(req, res) {
+    const userId = req.params.id;
+
+    try {
+        if (!userId) return res.status(500).json({ error: "Missing user ID." });
+
+        const query = 'DELETE FROM stride.user_refresh_tokens WHERE user_id = ?;';
+        const values = [userId];
+        connection.query(query, values, (error, results) => {
+            if (error) {
+                console.log(error.sqlMessage);
+                return res.status(500).json({ error: error.sqlMessage });
+            }
+            console.log(results);
+            if (results.affectedRows > 0) {
+                console.log("Refresh token deleted successfully.");
+                res.status(200).json(results);
+            } else {
+                console.log("Failed to delete refresh token.");
+                res.status(500).json(results);
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ error: error });
+    }
+}
+
 // get user with id in req
 function getUser(req, res) {
     const userId = req.params.id;
@@ -234,6 +262,7 @@ module.exports = {
     insertRefreshToken,
     verifyRefreshToken,
     deleteUserByUsername,
+    logoutUser,
     getUser,
     deleteUser
 }

@@ -14,7 +14,7 @@ router.post('/insert-refresh', userController.insertRefreshToken);
 // route to verify a user's refresh token
 router.post('/verify-refresh', userController.verifyRefreshToken);
 
-// if insertion from auth server needs to be reversed
+// route to remove user if insertion from auth server needs to be reversed
 router.post('/undo-register', userController.deleteUserByUsername);
 
 /*
@@ -25,6 +25,9 @@ are ONLY called by the authentication server (to register and login users)
 and are used to generate the jwt tokens for future requests. the routes below 
 may called by the client
 */
+
+// route to remove a refresh token if a user is logging out
+router.post('/protected/logout/:id', userController.logoutUser);
 
 // route to get a user from the db
 router.get('/protected/:id', userController.getUser);
