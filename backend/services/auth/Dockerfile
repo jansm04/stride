@@ -1,0 +1,14 @@
+FROM node:lts-alpine
+
+WORKDIR /code
+
+COPY package.json /code/package.json
+COPY package-lock.json /code/package-lock.json
+
+RUN npm install
+
+COPY . /code
+
+EXPOSE 4000
+
+CMD ["node", "app.js"]
