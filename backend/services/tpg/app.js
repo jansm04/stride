@@ -10,6 +10,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.get('/api/tpg/connect', (req, res) => {
+    return res.status(200).json({ result: "success" });
+})
+
 // define routes for training plan endpoints
 app.use('/api/tpg', router);
 

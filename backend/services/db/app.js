@@ -72,6 +72,10 @@ const verifyUser = (req, res, next) => {
     }
 }
 
+app.get('/api/db/connect', (req, res) => {
+    return res.status(200).json({ result: "success" });
+})
+
 // use authentication middleware for all changes in the plans tables and for 
 // getting/deleting users by user id in the users table 
 app.use('/api/db/plans', verifyUser);

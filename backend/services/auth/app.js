@@ -9,6 +9,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.get('/api/auth/connect', (req, res) => {
+  return res.status(200).json({ result: "success" });
+})
+
 // define routes
 app.use('/api/auth', router);
 
