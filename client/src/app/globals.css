@@ -3,31 +3,70 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --gray-light: #d3d3d3;   /* Light Gray */ 
+  --cyan-light: #00e5ff;   /* Light Cyan */
+  --cyan: #00bcd4;         /* Primary Cyan */
+  --cyan-dark: #00838f;    /* Dark Cyan */
+  --cyan-darker: #005662;  /* Darker Cyan */
+  --cyan-darkest: #06141f; /* Darkest Cyan */
+  --blue: #13343f;         /* Primary Blue */
+  --blue-dark: #091420;    /* Dark Blue */
+  --blue-darker: #040b14;  /* Darker Blue */
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply bg-blue-dark text-white;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.bg-cyan-light {
+  background-color: var(--cyan-light);
+}
+
+.bg-cyan {
+  background-color: var(--cyan);
+}
+
+.bg-cyan-dark {
+  background-color: var(--cyan-dark);
+}
+
+.bg-cyan-darker {
+  background-color: var(--cyan-darker);
+}
+
+.text-gray-light {
+  color: var(--gray-light)
+}
+
+.text-cyan-light {
+  color: var(--cyan-light);
+}
+
+.text-cyan {
+  color: var(--cyan);
+}
+
+.text-cyan-dark {
+  color: var(--cyan-dark);
+}
+
+.text-cyan-darker {
+  color: var(--cyan-darker);
+}
+
+.bg-cyan-darkest {
+  background-color: var(--cyan-darkest);
+}
+
+.bg-blue-dark {
+  background-color: var(--blue-dark);
+}
+
+.bg-blue-darker {
+  background-color: var(--blue-darker);
+}
+
+/* Define a static wavy gradient background */
+.bg-wavy-gradient {
+  background: linear-gradient(90deg, var(--blue), var(--blue-dark));
 }
