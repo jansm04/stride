@@ -159,6 +159,14 @@ export default function Register() {
               Already have an account? Log in here.
           </Link>
         </div>
+
+        <div className="mb-2 text-center">
+          <Link 
+            href='/'
+            className="text-gray-600 text-xs hover:text-[--cyan] hover:underline">
+              Continue without an account.
+          </Link>
+        </div>
       </form>
     </div>
   );

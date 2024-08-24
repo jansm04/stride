@@ -101,11 +101,19 @@ export default function Login() {
           Log In
         </button>
 
-        <div className="text-center">
+        <div className="mb-2 text-center">
           <Link 
             href='/auth/register'
             className="text-gray-600 text-xs hover:text-[--cyan] hover:underline">
               Don't have an account? Register here.
+          </Link>
+        </div>
+
+        <div className="text-center">
+          <Link 
+            href='/'
+            className="text-gray-600 text-xs hover:text-[--cyan] hover:underline">
+              Continue without an account.
           </Link>
         </div>
       </form>
