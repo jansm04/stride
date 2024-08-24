@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Register() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function Register() {
 
     try {
       // Send data to authentication microservice
-      const response = await fetch('http://18.222.30.29:4000/api/auth/register', {
+      const response = await fetch('<backend url>/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -146,10 +147,18 @@ export default function Register() {
 
         <button
           type="submit"
-          className="w-full py-2 px-4 mt-4 bg-cyan hover:bg-[--cyan-dark] text-gray-900 font-bold rounded focus:outline-none transition-colors duration-200"
+          className="mb-6 w-full py-2 px-4 mt-4 bg-cyan hover:bg-[--cyan-dark] text-gray-900 font-bold rounded focus:outline-none transition-colors duration-200"
         >
           Register
         </button>
+
+        <div className="text-center">
+          <Link 
+            href='/auth/login'
+            className="text-gray-600 text-xs hover:text-[--cyan] hover:underline">
+              Already have an account? Log in here.
+          </Link>
+        </div>
       </form>
     </div>
   );

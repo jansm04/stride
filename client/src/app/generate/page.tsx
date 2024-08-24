@@ -39,7 +39,7 @@ export default function GeneratePlan() {
     };
 
     try {
-      const response = await fetch('http://18.222.30.29:3000/api/tpg', {
+      const response = await fetch('<backend url>/api/tpg', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
