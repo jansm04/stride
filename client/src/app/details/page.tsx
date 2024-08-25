@@ -10,6 +10,7 @@ export default function PlanDetails() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const { trainingPlan } = useTrainingPlan();
 
   if (!trainingPlan) {
@@ -43,18 +44,20 @@ export default function PlanDetails() {
     }
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/db/plans/${userId}`, 
+      axios.post(`http://localhost:5000/api/db/plans/${userId}`, 
         trainingPlan, 
         {
           headers: {
             Authorization: `Bearer ${token}`
           }
-        }
-    );
-      setIsLoading(false);
-      if (response.status == 200) {
-        setIsSaved(true);
-      }
+        }).then(() => {
+          setIsSaved(true);
+        }).catch((error) => {
+          console.log(error);
+          setError("An error occurred trying to save your plan.");
+        }).finally(() => {
+          setIsLoading(false);
+        });
     } catch (error) {
       console.error('Error saving the plan:', error);
     } 
@@ -99,12 +102,19 @@ export default function PlanDetails() {
             <span className="ml-2 text-cyan-light">Loading...</span>
           </div>
         )}
+        {error && (
+          <div className="ml-auto">
+            <p className='text-sm text-red-500 align-middle'>
+              {error}
+            </p>
+          </div>
+        )}
         {isSaved && (
           <div className="ml-auto">
             <p className='text-sm text-gray-light align-middle'>
               Your training plan has been successfully saved.
             </p>
-        </div>
+          </div>
         )}
       </div>
 
