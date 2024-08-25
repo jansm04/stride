@@ -57,7 +57,7 @@ async function createTrainingPlan(req, res) {
         connection.query(factQuery, factValues, (error, results) => {
             if (error) {
                 console.log(error.sqlMessage);
-                res.status(500).json({ error: error.sqlMessage });
+                return res.status(500).json({ error: error.sqlMessage });
             }
             const planID = results.insertId;
             console.log("Plan inserted successfully into fact table.", results);
@@ -73,7 +73,7 @@ async function createTrainingPlan(req, res) {
             connection.query(planDetailsQuery, planDetailsFact, (error, results) => {
                 if (error) {
                     console.log(error.sqlMessage);
-                    res.status(500).json({ error: error.sqlMessage });
+                    return res.status(500).json({ error: error.sqlMessage });
                 }
                 console.log("Plan inserted successfully into plan_details table.", results);
             })
@@ -118,7 +118,7 @@ async function createTrainingPlan(req, res) {
                     connection.query(planWorkoutsQuery, planWorkoutsValues, (error, results) => {
                         if (error) {
                             console.log(error.sqlMessage);
-                            res.status(500).json({ error: error.sqlMessage });
+                            return res.status(500).json({ error: error.sqlMessage });
                         }
 
                         // send response once last row is added
@@ -131,7 +131,7 @@ async function createTrainingPlan(req, res) {
             }
         })
     } catch (error) {
-        res.status(500).json({ error: error });
+        return res.status(500).json({ error: error });
     }
 }
 
