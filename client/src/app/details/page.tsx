@@ -1,8 +1,15 @@
 "use client";
 
 import { useTrainingPlan } from "@/lib/context/plan-context";
+import { MouseEvent, useState } from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function PlanDetails() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const { trainingPlan } = useTrainingPlan();
 
   if (!trainingPlan) {
@@ -13,6 +20,46 @@ export default function PlanDetails() {
     );
   }
 
+  const handleSavePlan = async (e: MouseEvent) => {
+    e.preventDefault();
+
+    // simulate api call
+    // setIsLoading(true)
+    // setIsSaved(false)
+    // setTimeout(function() {
+    //   setIsLoading(false)
+    //   setIsSaved(true)
+    // }, 1000);
+
+    setIsLoading(true);
+    if (isSaved) setIsSaved(false);
+
+    const token = Cookies.get('accessToken');
+    const userId = Cookies.get('userId');
+
+    if (!token) {
+      router.push('/auth/login');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`http://localhost:5000/api/db/plans/${userId}`, 
+        trainingPlan, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+    );
+      setIsLoading(false);
+      if (response.status == 200) {
+        setIsSaved(true);
+      }
+    } catch (error) {
+      console.error('Error saving the plan:', error);
+    } 
+  }
+
   const formatWorkoutContent = (word: string): string => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   }
@@ -20,6 +67,47 @@ export default function PlanDetails() {
   return (
     <div className="min-h-screen bg-wavy-gradient text-gray-light flex flex-col items-center p-4">
       <h1 className="text-4xl font-bold mb-8 text-cyan-light">Your Training Plan</h1>
+      <div className="flex items-center my-4 w-full max-w-2xl">
+        <button
+          className="w-fit py-2 px-4 bg-cyan hover:bg-[--cyan-dark] text-gray-900 font-bold rounded focus:outline-none transition-colors duration-200"
+          onClick={handleSavePlan}
+          >
+          Save Plan
+        </button>
+        {isLoading && (
+          <div className="ml-auto flex justify-center mt-4">
+            <svg
+              className="animate-spin h-5 w-5 text-cyan-light"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8l5.657-5.657A8 8 0 114 12z"
+              ></path>
+            </svg>
+            <span className="ml-2 text-cyan-light">Loading...</span>
+          </div>
+        )}
+        {isSaved && (
+          <div className="ml-auto">
+            <p className='text-sm text-gray-light align-middle'>
+              Your training plan has been successfully saved.
+            </p>
+        </div>
+        )}
+      </div>
+
       <div className="space-y-8 w-full max-w-2xl">
         {trainingPlan.trainingPlan.map((week) => (
           <div

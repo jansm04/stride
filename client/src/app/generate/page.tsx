@@ -2,7 +2,7 @@
 
 import { TrainingPlan, useTrainingPlan } from '@/lib/context/plan-context';
 import Link from 'next/link';
-import { useState, FormEvent, MouseEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 
 interface PlanData {
   weeks: number;
@@ -39,7 +39,7 @@ export default function GeneratePlan() {
     };
 
     try {
-      const response = await fetch('<backend url>/api/tpg', {
+      const response = await fetch('http://localhost:3002/api/tpg', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

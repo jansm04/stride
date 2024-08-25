@@ -41,7 +41,7 @@ export default function Register() {
 
     try {
       // Send data to authentication microservice
-      const response = await fetch('<backend url>/api/auth/register', {
+      const response = await fetch('http://localhost:4000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,9 +50,13 @@ export default function Register() {
       });
       const data = await response.json();
       if (data.result === 'success') {
+        console.log(data);
+        
         // Store JWT in a cookie
         Cookies.set('accessToken', data.accessToken);
         Cookies.set('refreshToken', data.refreshToken);
+        // store user id in a cookie
+        Cookies.set('userId', data.user.userId);
 
         // Redirect to the view plan page or another page
         router.push('/');
@@ -152,7 +156,7 @@ export default function Register() {
           Register
         </button>
 
-        <div className="text-center">
+        <div className="mb-2 text-center">
           <Link 
             href='/auth/login'
             className="text-gray-600 text-xs hover:text-[--cyan] hover:underline">

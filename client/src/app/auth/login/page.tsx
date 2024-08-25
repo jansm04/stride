@@ -30,7 +30,7 @@ export default function Login() {
 
     try {
       // Send data to authentication microservice
-      const response = await fetch('<backend url>/api/auth/login', {
+      const response = await fetch('http://localhost:4000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,15 +39,19 @@ export default function Login() {
       });
       const data = await response.json();
       if (data.result === 'success') {
+        console.log(data);
+        
         // Store JWT in a cookie
         Cookies.set('accessToken', data.accessToken);
-        Cookies.set('refreshToken', data.refreshToken);
+        Cookies.set('refreshToken', data.refreshToken);        
+        // store user id in a cookie
+        Cookies.set('userId', data.user.userId);
 
         // Redirect to the view plan page or another page
         router.push('/');
       } else {
         setError(data.error ? 
-          "Sorry! That username doesn't exist." : 
+          data.error : 
           "Registration failed. Please try again."
         );
       }
