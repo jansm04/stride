@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = require('./routes/router');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
+
+app.use(cors());
 
 // middleware to parse incoming request bodies
 app.use(bodyParser.json());

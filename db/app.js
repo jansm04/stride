@@ -3,13 +3,16 @@ const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const planRouter = require('./routes/planRouter');
 const userRouter = require('./routes/userRouter');
+const cors = require('cors');
 require('dotenv').config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 
 // create express application
 const app = express();
+
+app.use(cors());
 
 // middleware to parse incoming request bodies
 app.use(bodyParser.json());
