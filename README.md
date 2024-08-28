@@ -11,7 +11,7 @@ Users are required to input several key factors to generate their training plan.
 - First long run distance
 - Preferred long run day
 
-Together these arguments are passed to algorithm and used to generate a specific plan fit for its exact runner. The current version of the algorithm includes the following features:
+Together these arguments are passed to the algorithm and used to generate a specific plan fit for its exact runner. The current version of the algorithm includes the following features:
 
 - A planner to match the # of runs per week with a specific schedule of run types (for example, 4 runs per week would output a weekly schedule with two easy runs, one tempo run, and one long run)
 - An interval calculator that computes a peak long run distance based on your target time and determines a weekly rate of mileage increase based on your first long run distance and plan duration
