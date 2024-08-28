@@ -1,6 +1,6 @@
 # Stride
 
-Stride is a platform for runners to generate and save marathon training plans. It is powered by my own algorithm backed by both extensive research and vast personal experience, designed to deliver training plans oriented towards any kind of runner. The main goal of this project was to gain experience working with cloud computing and implementing a microservices architecture. As AWS is primarily used by actual companies, and this project is currently just a concept application, as of this instant I am not running any of the backend microservices in order to avoid spending lots of my own money on ECS deployments. The below content illustrates how the site works when all the services are deployed and running.
+Stride is a platform for runners to generate and save marathon training plans. It is powered by an original algorithm backed by both extensive research and vast personal experience, designed to deliver training plans oriented towards any kind of runner. The main goal of this project was to gain experience working with cloud computing and implementing a microservices architecture. As AWS is primarily used by actual companies, and this project is currently just a concept application, as of this instant I am not running any of the backend microservices in order to avoid spending lots of my own money on ECS deployments. The below content illustrates how the site works when all the services are deployed and running.
 
 ## Algorithm
 Users are required to input several key factors to generate their training plan. These factors include:
@@ -33,4 +33,4 @@ The database management service is also connected to the MySQL database, which i
 To see a diagram of the architecture, click [here](https://github.com/jansm04/stride/blob/main/architecture.pdf).
 
 ##
-Stride is an ongoing project of mine that will continue to recieve updates and improvements.
+This is an ongoing project of mine that will continue to recieve updates and improvements.
